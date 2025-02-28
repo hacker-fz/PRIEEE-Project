@@ -5,7 +5,7 @@ const sidebar = ({ activeTab, setActiveTab, navItems }) => {
         <div className="h-full bg-card border-r border-border flex flex-col">
             {/* Logo */}
             <div className="p-6 border-b border-border">
-                <h2 className="text-2xl font-bold">WMS Admin</h2>
+                <h2 className="text-2xl font-bold primary-text-gradient">WMS Admin</h2>
             </div>
 
             {/* Navigation */}
@@ -17,7 +17,7 @@ const sidebar = ({ activeTab, setActiveTab, navItems }) => {
                         className={cn(
                             "w-full flex items-center space-x-3 px-4 py-3 rounded-md transition-colors",
                             activeTab === item.id
-                                ? "bg-primary text-primary-foreground"
+                                ? "primary-gradient text-primary-foreground font-bold"
                                 : "hover:bg-accent"
                         )}
                     >

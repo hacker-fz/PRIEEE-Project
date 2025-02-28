@@ -30,100 +30,7 @@ import {
     Phone
 } from "lucide-react";
 import { toast } from 'sonner';
-
-// Mock data for active deliveries
-const activeDeliveries = [
-    {
-        id: 'DEL-1234',
-        orderId: 'DO-1001',
-        destination: 'PDS Store #42',
-        address: '123 Main St, City A',
-        driver: { id: 'D-001', name: 'John Smith', phone: '555-1234' },
-        vehicle: { id: 'V-001', type: 'Truck', licensePlate: 'ABC-1234' },
-        departureTime: '08:30 AM',
-        estimatedArrival: '10:45 AM',
-        status: 'In Transit',
-        progress: 65,
-        currentLocation: { lat: 34.0522, lng: -118.2437 },
-        route: [
-            { lat: 34.0522, lng: -118.2437, timestamp: '08:30 AM' },
-            { lat: 34.0548, lng: -118.2642, timestamp: '08:45 AM' },
-            { lat: 34.0595, lng: -118.2786, timestamp: '09:15 AM' },
-            { lat: 34.0639, lng: -118.2912, timestamp: '09:45 AM' },
-            { lat: 34.0689, lng: -118.3037, timestamp: '10:15 AM' }
-        ],
-        alerts: []
-    },
-    {
-        id: 'DEL-1235',
-        orderId: 'DO-1002',
-        destination: 'PDS Store #17',
-        address: '456 Oak Ave, City B',
-        driver: { id: 'D-002', name: 'Maria Garcia', phone: '555-5678' },
-        vehicle: { id: 'V-002', type: 'Van', licensePlate: 'DEF-5678' },
-        departureTime: '09:15 AM',
-        estimatedArrival: '11:30 AM',
-        status: 'In Transit',
-        progress: 40,
-        currentLocation: { lat: 34.1478, lng: -118.1445 },
-        route: [
-            { lat: 34.1478, lng: -118.1445, timestamp: '09:15 AM' },
-            { lat: 34.1512, lng: -118.1567, timestamp: '09:30 AM' },
-            { lat: 34.1563, lng: -118.1689, timestamp: '10:00 AM' }
-        ],
-        alerts: [
-            { type: 'Route Deviation', message: 'Vehicle deviated from planned route', timestamp: '09:45 AM', severity: 'Medium' }
-        ]
-    },
-    {
-        id: 'DEL-1236',
-        orderId: 'DO-1003',
-        destination: 'PDS Store #08',
-        address: '789 Pine Rd, City C',
-        driver: { id: 'D-004', name: 'Sarah Johnson', phone: '555-3456' },
-        vehicle: { id: 'V-003', type: 'Truck', licensePlate: 'GHI-9012' },
-        departureTime: '08:45 AM',
-        estimatedArrival: '10:15 AM',
-        status: 'Delayed',
-        progress: 75,
-        currentLocation: { lat: 34.0224, lng: -118.2851 },
-        route: [
-            { lat: 34.0224, lng: -118.2851, timestamp: '08:45 AM' },
-            { lat: 34.0276, lng: -118.2967, timestamp: '09:00 AM' },
-            { lat: 34.0328, lng: -118.3083, timestamp: '09:30 AM' },
-            { lat: 34.0380, lng: -118.3199, timestamp: '10:00 AM' }
-        ],
-        alerts: [
-            { type: 'Traffic Delay', message: 'Heavy traffic on main route', timestamp: '09:30 AM', severity: 'Low' }
-        ]
-    }
-];
-
-// Mock data for completed deliveries
-const completedDeliveries = [
-    {
-        id: 'DEL-1230',
-        orderId: 'DO-0997',
-        destination: 'PDS Store #15',
-        driver: { id: 'D-005', name: 'Robert Taylor', phone: '555-7890' },
-        vehicle: { id: 'V-005', type: 'Truck', licensePlate: 'MNO-7890' },
-        departureTime: '08:00 AM',
-        arrivalTime: '09:45 AM',
-        status: 'Delivered',
-        completionTime: '10:15 AM'
-    },
-    {
-        id: 'DEL-1231',
-        orderId: 'DO-0998',
-        destination: 'PDS Store #29',
-        driver: { id: 'D-001', name: 'John Smith', phone: '555-1234' },
-        vehicle: { id: 'V-001', type: 'Truck', licensePlate: 'ABC-1234' },
-        departureTime: '09:30 AM',
-        arrivalTime: '11:15 AM',
-        status: 'Delivered',
-        completionTime: '11:45 AM'
-    }
-];
+import { activeDeliveries, completedDeliveries } from '@/constants';
 
 const RealTimeTracking = () => {
     const [deliveries, setDeliveries] = useState(activeDeliveries);
@@ -181,7 +88,7 @@ const RealTimeTracking = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold tracking-tight">Real-Time Tracking</h2>
+                <h2 className="text-3xl font-bold tracking-tight primary-text-gradient">Real-Time Tracking</h2>
                 <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
                     <RotateCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
                     Refresh Data

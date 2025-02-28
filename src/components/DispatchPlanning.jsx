@@ -41,98 +41,7 @@ import {
     CheckCircle2,
 } from "lucide-react";
 import { toast } from 'sonner';
-
-// Mock data for dispatch orders
-const initialDispatchOrders = [
-    {
-        id: 'DO-1001',
-        destination: 'PDS Store #42',
-        address: '123 Main St, City A',
-        items: [
-            { batchId: 'B-7829', productName: 'Rice (25kg)', quantity: 20 },
-            { batchId: 'B-7830', productName: 'Wheat Flour (10kg)', quantity: 15 }
-        ],
-        scheduledDate: '2025-06-15',
-        status: 'Pending',
-        priority: 'High',
-        vehicle: null,
-        driver: null
-    },
-    {
-        id: 'DO-1002',
-        destination: 'PDS Store #17',
-        address: '456 Oak Ave, City B',
-        items: [
-            { batchId: 'B-7831', productName: 'Sugar (5kg)', quantity: 30 },
-            { batchId: 'B-7834', productName: 'Lentils (5kg)', quantity: 25 }
-        ],
-        scheduledDate: '2025-06-16',
-        status: 'Pending',
-        priority: 'Medium',
-        vehicle: null,
-        driver: null
-    },
-    {
-        id: 'DO-1003',
-        destination: 'PDS Store #08',
-        address: '789 Pine Rd, City C',
-        items: [
-            { batchId: 'B-7832', productName: 'Cooking Oil (5L)', quantity: 40 },
-            { batchId: 'B-7835', productName: 'Salt (1kg)', quantity: 50 }
-        ],
-        scheduledDate: '2025-06-15',
-        status: 'Pending',
-        priority: 'High',
-        vehicle: null,
-        driver: null
-    },
-    {
-        id: 'DO-1004',
-        destination: 'PDS Store #23',
-        address: '101 Elm St, City D',
-        items: [
-            { batchId: 'B-7836', productName: 'Tea (500g)', quantity: 60 },
-            { batchId: 'B-7838', productName: 'Pasta (500g)', quantity: 45 }
-        ],
-        scheduledDate: '2025-06-17',
-        status: 'Pending',
-        priority: 'Low',
-        vehicle: null,
-        driver: null
-    },
-    {
-        id: 'DO-1005',
-        destination: 'PDS Store #11',
-        address: '202 Cedar Ln, City E',
-        items: [
-            { batchId: 'B-7833', productName: 'Milk Powder (1kg)', quantity: 35 },
-            { batchId: 'B-7837', productName: 'Canned Beans (400g)', quantity: 70 }
-        ],
-        scheduledDate: '2025-06-16',
-        status: 'Pending',
-        priority: 'Medium',
-        vehicle: null,
-        driver: null
-    }
-];
-
-// Mock data for vehicles
-const vehicles = [
-    { id: 'V-001', type: 'Truck', capacity: '5 tons', status: 'Available', licensePlate: 'ABC-1234' },
-    { id: 'V-002', type: 'Van', capacity: '2 tons', status: 'Available', licensePlate: 'DEF-5678' },
-    { id: 'V-003', type: 'Truck', capacity: '8 tons', status: 'Available', licensePlate: 'GHI-9012' },
-    { id: 'V-004', type: 'Van', capacity: '1.5 tons', status: 'In Maintenance', licensePlate: 'JKL-3456' },
-    { id: 'V-005', type: 'Truck', capacity: '10 tons', status: 'Available', licensePlate: 'MNO-7890' }
-];
-
-// Mock data for drivers
-const drivers = [
-    { id: 'D-001', name: 'John Smith', phone: '555-1234', status: 'Available', license: 'DL-123456' },
-    { id: 'D-002', name: 'Maria Garcia', phone: '555-5678', status: 'Available', license: 'DL-234567' },
-    { id: 'D-003', name: 'David Chen', phone: '555-9012', status: 'On Leave', license: 'DL-345678' },
-    { id: 'D-004', name: 'Sarah Johnson', phone: '555-3456', status: 'Available', license: 'DL-456789' },
-    { id: 'D-005', name: 'Robert Taylor', phone: '555-7890', status: 'Available', license: 'DL-567890' }
-];
+import { drivers, initialDispatchOrders, vehicles } from '@/constants';
 
 const DispatchPlanning = () => {
     const [dispatchOrders, setDispatchOrders] = useState(initialDispatchOrders);
@@ -213,7 +122,7 @@ const DispatchPlanning = () => {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight">Dispatch Planning</h2>
+            <h2 className="text-3xl font-bold tracking-tight primary-text-gradient">Dispatch Planning</h2>
 
             <Tabs defaultValue="pending">
                 <TabsList className="grid w-full grid-cols-3">

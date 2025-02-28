@@ -36,20 +36,7 @@ import {
     AlertTriangle
 } from "lucide-react";
 import { toast } from 'sonner';
-
-// Mock data for stock items
-const initialStockData = [
-    { id: 1, batchId: 'B-7829', productName: 'Rice (25kg)', category: 'Grains', quantity: 145, expiryDate: '2025-12-15', location: 'Zone A, Rack 12', status: 'In Stock' },
-    { id: 2, batchId: 'B-7830', productName: 'Wheat Flour (10kg)', category: 'Grains', quantity: 230, expiryDate: '2025-10-20', location: 'Zone A, Rack 14', status: 'In Stock' },
-    { id: 3, batchId: 'B-7831', productName: 'Sugar (5kg)', category: 'Sweeteners', quantity: 180, expiryDate: '2026-01-10', location: 'Zone A, Rack 15', status: 'In Stock' },
-    { id: 4, batchId: 'B-7832', productName: 'Cooking Oil (5L)', category: 'Oils', quantity: 120, expiryDate: '2025-08-05', location: 'Zone B, Rack 3', status: 'Low Stock' },
-    { id: 5, batchId: 'B-7833', productName: 'Milk Powder (1kg)', category: 'Dairy', quantity: 90, expiryDate: '2025-06-30', location: 'Zone B, Rack 5', status: 'Low Stock' },
-    { id: 6, batchId: 'B-7834', productName: 'Lentils (5kg)', category: 'Pulses', quantity: 200, expiryDate: '2026-02-15', location: 'Zone A, Rack 18', status: 'In Stock' },
-    { id: 7, batchId: 'B-7835', productName: 'Salt (1kg)', category: 'Condiments', quantity: 300, expiryDate: '2027-01-01', location: 'Zone A, Rack 20', status: 'In Stock' },
-    { id: 8, batchId: 'B-7836', productName: 'Tea (500g)', category: 'Beverages', quantity: 150, expiryDate: '2025-09-12', location: 'Zone B, Rack 8', status: 'In Stock' },
-    { id: 9, batchId: 'B-7837', productName: 'Canned Beans (400g)', category: 'Canned Goods', quantity: 25, expiryDate: '2025-05-20', location: 'Zone C, Rack 2', status: 'Critical Stock' },
-    { id: 10, batchId: 'B-7838', productName: 'Pasta (500g)', category: 'Grains', quantity: 175, expiryDate: '2025-11-30', location: 'Zone A, Rack 16', status: 'In Stock' },
-];
+import { initialStockData } from '@/constants';
 
 const StockManagement = () => {
     const [stockData, setStockData] = useState(initialStockData);
@@ -123,7 +110,7 @@ const StockManagement = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold tracking-tight">Stock Management</h2>
+                <h2 className="text-3xl font-bold tracking-tight primary-text-gradient">Stock Management</h2>
 
                 <Dialog>
                     <DialogTrigger asChild>
@@ -206,7 +193,7 @@ const StockManagement = () => {
 
             {/* Search and filter */}
             <Card>
-                <CardContent className="p-6">
+                <CardContent >
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

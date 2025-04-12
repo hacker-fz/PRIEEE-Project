@@ -4,7 +4,7 @@ import {
     CardContent,
     CardDescription,
     CardHeader,
-    CardTitle
+    CardTitle,
 } from "@/components/ui/card";
 import {
     Table,
@@ -12,7 +12,7 @@ import {
     TableCell,
     TableHead,
     TableHeader,
-    TableRow
+    TableRow,
 } from "@/components/ui/table";
 import {
     Dialog,
@@ -33,7 +33,14 @@ import {
     Plus,
     Edit,
     Trash2,
-    AlertTriangle
+    AlertTriangle,
+    ChevronRight,
+    Loader2,
+    Package,
+    CalendarDays,
+    MapPin,
+    Boxes,
+    Gauge
 } from "lucide-react";
 import { toast } from 'sonner';
 import { initialStockData } from '@/constants';
@@ -51,34 +58,46 @@ const StockManagement = () => {
         location: '',
         status: 'In Stock'
     });
+    const [addDialogOpen, setAddDialogOpen] = useState(false);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
 
-    // Filter stock data based on search term
     const filteredStock = stockData.filter(item =>
         item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Handle edit item
     const handleEditItem = (item) => {
         setEditItem({ ...item });
+        setEditDialogOpen(true);
     };
 
-    // Handle update item
-    const handleUpdateItem = () => {
+    const handleUpdateItem = async () => {
+        setIsUpdating(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
         setStockData(stockData.map(item => item.id === editItem.id ? editItem : item));
         setEditItem(null);
+        setEditDialogOpen(false);
+        setIsUpdating(false);
         toast.success('Stock item updated successfully');
     };
 
-    // Handle delete item
-    const handleDeleteItem = (id) => {
+    const handleDeleteItem = async (id) => {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 500));
         setStockData(stockData.filter(item => item.id !== id));
         toast.success('Stock item deleted successfully');
     };
 
-    // Handle add new item
-    const handleAddItem = () => {
+    const handleAddItem = async () => {
+        setIsAdding(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
         const newId = Math.max(...stockData.map(item => item.id)) + 1;
         setStockData([...stockData, { id: newId, ...newItem }]);
         setNewItem({
@@ -90,38 +109,62 @@ const StockManagement = () => {
             location: '',
             status: 'In Stock'
         });
+        setAddDialogOpen(false);
+        setIsAdding(false);
         toast.success('New stock item added successfully');
     };
 
-    // Get status badge color
     const getStatusBadge = (status) => {
         switch (status) {
             case 'In Stock':
-                return <Badge className="bg-green-500">{status}</Badge>;
+                return <Badge className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">{status}</Badge>;
             case 'Low Stock':
-                return <Badge className="bg-yellow-500">{status}</Badge>;
+                return <Badge className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">{status}</Badge>;
             case 'Critical Stock':
-                return <Badge className="bg-red-500">{status}</Badge>;
+                return <Badge className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">{status}</Badge>;
             default:
                 return <Badge>{status}</Badge>;
         }
     };
 
-    return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold tracking-tight primary-text-gradient">Stock Management</h2>
+    const isExpiringSoon = (expiryDate) => {
+        const expiry = new Date(expiryDate);
+        const threeMonthsFromNow = new Date();
+        threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
+        return expiry < threeMonthsFromNow;
+    };
 
-                <Dialog>
+    // Calculate summary metrics
+    const totalItems = stockData.length;
+    const lowStockItems = stockData.filter(item => item.status === 'Low Stock').length;
+    const criticalStockItems = stockData.filter(item => item.status === 'Critical Stock').length;
+    const expiringSoonItems = stockData.filter(item => isExpiringSoon(item.expiryDate)).length;
+
+    return (
+        <div className="space-y-6 p-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                        Stock Management
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Manage your warehouse inventory and track stock levels
+                    </p>
+                </div>
+
+                <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" />
+                        <Button className="group">
+                            <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform" />
                             Add New Stock
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
-                            <DialogTitle>Add New Stock Item</DialogTitle>
+                            <DialogTitle className="flex items-center gap-2">
+                                <Package className="h-5 w-5 text-primary" />
+                                Add New Stock Item
+                            </DialogTitle>
                             <DialogDescription>
                                 Enter the details of the new stock item to add to inventory.
                             </DialogDescription>
@@ -185,15 +228,69 @@ const StockManagement = () => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button onClick={handleAddItem}>Add Stock Item</Button>
+                            <Button onClick={handleAddItem} disabled={isAdding}>
+                                {isAdding ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Adding...
+                                    </>
+                                ) : 'Add Stock Item'}
+                            </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
             </div>
 
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Total Items</CardTitle>
+                        <Boxes className="h-5 w-5 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalItems}</div>
+                        <p className="text-xs text-muted-foreground">All inventory items</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Low Stock</CardTitle>
+                        <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{lowStockItems}</div>
+                        <p className="text-xs text-muted-foreground">Items below optimal levels</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Critical Stock</CardTitle>
+                        <AlertTriangle className="h-5 w-5 text-red-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{criticalStockItems}</div>
+                        <p className="text-xs text-muted-foreground">Urgent replenishment needed</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
+                        <CalendarDays className="h-5 w-5 text-orange-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{expiringSoonItems}</div>
+                        <p className="text-xs text-muted-foreground">Within next 3 months</p>
+                    </CardContent>
+                </Card>
+            </div>
+
             {/* Search and filter */}
-            <Card>
-                <CardContent >
+            <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="pt-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -213,9 +310,12 @@ const StockManagement = () => {
             </Card>
 
             {/* Stock table */}
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                    <CardTitle>Stock Inventory</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                        <Package className="h-5 w-5 text-primary" />
+                        Stock Inventory
+                    </CardTitle>
                     <CardDescription>
                         Manage your warehouse stock inventory, update quantities, and track expiry dates.
                     </CardDescription>
@@ -224,42 +324,75 @@ const StockManagement = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Batch ID</TableHead>
+                                <TableHead className="w-[120px]">Batch ID</TableHead>
                                 <TableHead>Product Name</TableHead>
                                 <TableHead>Category</TableHead>
-                                <TableHead>Quantity</TableHead>
-                                <TableHead>Expiry Date</TableHead>
-                                <TableHead>Location</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead className="w-[100px]">Quantity</TableHead>
+                                <TableHead className="w-[120px]">Expiry Date</TableHead>
+                                <TableHead className="w-[120px]">Location</TableHead>
+                                <TableHead className="w-[120px]">Status</TableHead>
+                                <TableHead className="w-[120px] text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredStock.map((item) => (
-                                <TableRow key={item.id}>
-                                    <TableCell className="font-medium">{item.batchId}</TableCell>
-                                    <TableCell>{item.productName}</TableCell>
-                                    <TableCell>{item.category}</TableCell>
-                                    <TableCell>{item.quantity}</TableCell>
-                                    <TableCell>
-                                        {item.expiryDate}
-                                        {new Date(item.expiryDate) < new Date(new Date().setMonth(new Date().getMonth() + 3)) && (
-                                            <AlertTriangle className="inline ml-2 h-4 w-4 text-yellow-500" />
-                                        )}
+                                <TableRow key={item.id} className="group">
+                                    <TableCell className="font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <Boxes className="h-4 w-4 text-muted-foreground" />
+                                            {item.batchId}
+                                        </div>
                                     </TableCell>
-                                    <TableCell>{item.location}</TableCell>
+                                    <TableCell>{item.productName}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className="text-xs">
+                                            {item.category}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <Gauge className="h-4 w-4 text-muted-foreground" />
+                                            {item.quantity}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                                            {item.expiryDate}
+                                            {isExpiringSoon(item.expiryDate) && (
+                                                <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <MapPin className="h-4 w-4 text-muted-foreground" />
+                                            {item.location}
+                                        </div>
+                                    </TableCell>
                                     <TableCell>{getStatusBadge(item.status)}</TableCell>
                                     <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Dialog>
+                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Dialog open={editDialogOpen && editItem?.id === item.id} onOpenChange={(open) => {
+                                                if (!open) setEditItem(null);
+                                                setEditDialogOpen(open);
+                                            }}>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="ghost" size="icon" onClick={() => handleEditItem(item)}>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon"
+                                                        className="hover:bg-primary/10 hover:text-primary"
+                                                        onClick={() => handleEditItem(item)}
+                                                    >
                                                         <Edit className="h-4 w-4" />
                                                     </Button>
                                                 </DialogTrigger>
                                                 <DialogContent className="sm:max-w-[500px]">
                                                     <DialogHeader>
-                                                        <DialogTitle>Edit Stock Item</DialogTitle>
+                                                        <DialogTitle className="flex items-center gap-2">
+                                                            <Edit className="h-5 w-5 text-primary" />
+                                                            Edit Stock Item
+                                                        </DialogTitle>
                                                         <DialogDescription>
                                                             Update the details of the stock item.
                                                         </DialogDescription>
@@ -338,13 +471,21 @@ const StockManagement = () => {
                                                         </div>
                                                     )}
                                                     <DialogFooter>
-                                                        <Button onClick={handleUpdateItem}>Update Stock</Button>
+                                                        <Button onClick={handleUpdateItem} disabled={isUpdating}>
+                                                            {isUpdating ? (
+                                                                <>
+                                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                                    Updating...
+                                                                </>
+                                                            ) : 'Update Stock'}
+                                                        </Button>
                                                     </DialogFooter>
                                                 </DialogContent>
                                             </Dialog>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
+                                                className="hover:bg-destructive/10 hover:text-destructive"
                                                 onClick={() => handleDeleteItem(item.id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -359,19 +500,31 @@ const StockManagement = () => {
             </Card>
 
             {/* Stock Alerts */}
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                    <CardTitle>Stock Alerts</CardTitle>
-                    <CardDescription>Items requiring attention</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                        Stock Alerts
+                    </CardTitle>
+                    <CardDescription>Items requiring immediate attention</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {stockData
-                            .filter(item => item.status === 'Low Stock' || item.status === 'Critical Stock' || new Date(item.expiryDate) < new Date(new Date().setMonth(new Date().getMonth() + 3)))
+                            .filter(item => item.status === 'Low Stock' || item.status === 'Critical Stock' || isExpiringSoon(item.expiryDate))
                             .map((item) => (
-                                <div key={item.id} className="flex items-center justify-between p-4 rounded-md bg-accent">
+                                <div 
+                                    key={item.id} 
+                                    className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                                >
                                     <div className="flex items-center gap-4">
-                                        <AlertTriangle className={`h-5 w-5 ${item.status === 'Critical Stock' ? 'text-red-500' : 'text-yellow-500'}`} />
+                                        <div className={`p-2 rounded-full ${
+                                            item.status === 'Critical Stock' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' :
+                                            item.status === 'Low Stock' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' :
+                                            'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
+                                        }`}>
+                                            <AlertTriangle className="h-5 w-5" />
+                                        </div>
                                         <div>
                                             <p className="font-medium">{item.productName} ({item.batchId})</p>
                                             <p className="text-sm text-muted-foreground">
@@ -381,7 +534,9 @@ const StockManagement = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <Button variant="outline" size="sm">Take Action</Button>
+                                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                        Take Action <ChevronRight className="h-4 w-4" />
+                                    </Button>
                                 </div>
                             ))}
                     </div>
